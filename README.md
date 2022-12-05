@@ -20,42 +20,24 @@ The WebClient is part of spring-webflux module and we will add it as required de
     <artifactId>spring-boot-starter-webflux</artifactId>
 </dependency>
 <dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-consul-discovery</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-```
-
-## Creating WebClient
-
-We can use the builder to customize the client behavior. Another option is to create the WebClient by using WebClient.create() and configure it accordingly.
-
-```java
-@Bean
-    public WebClient webClient(ClientConfig config) {
-        HttpClient httpClient = HttpClient.create()
-                .doOnConnected(connection ->  connection
-                .addHandlerLast(new ReadTimeoutHandler(10))
-                .addHandlerLast(new WriteTimeoutHandler(10)));
-
-        ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
-
-        return webClientBuilder()
-                .baseUrl(config.getUrl())
-                .clientConnector(connector)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
-    }
-
-    @Bean
-    @LoadBalanced
-    public WebClient.Builder webClientBuilder() {
-        return WebClient.builder();
-    }
-
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-consul-discovery</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-dependencies</artifactId>
+            <version>${spring-cloud.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
 ```
 
 ```yaml
@@ -83,6 +65,52 @@ management:
 remote:
   services:
     url: http://spring-consul
+```
+
+## Creating WebClient
+
+An inter-service communication is realized by the WebClient from Spring WebFlux project. The same as for RestTemplate you should annotate it with Spring Cloud Commons @LoadBalanced . It enables integration with service discovery and load balancing using Netflix OSS Ribbon client. So, the first step is to declare a client builder bean with @LoadBalanced annotation.
+
+```java
+@Bean
+    public WebClient webClient(ClientConfig config) {
+        HttpClient httpClient = HttpClient.create()
+                .doOnConnected(connection ->  connection
+                .addHandlerLast(new ReadTimeoutHandler(10))
+                .addHandlerLast(new WriteTimeoutHandler(10)));
+
+        ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
+
+        return webClientBuilder()
+                .baseUrl(config.getUrl())
+                .clientConnector(connector)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+    }
+
+    @Bean
+    @LoadBalanced
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
+    }
+
+```
+
+You must as well enable the client-side service discovery
+
+```java
+@SpringBootApplication
+@EnableDiscoveryClient
+public class Application {
+
+	@Autowired
+	DiscoveryClient discoveryClient;
+
+	public static void main(String[] args) {
+		SpringApplication.run(Application.class, args);
+	}
+
+}
 ```
 
 ## Sending Request
