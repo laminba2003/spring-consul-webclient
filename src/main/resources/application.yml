@@ -1,0 +1,24 @@
+server:
+  port: 9092
+spring:
+  application:
+    name: spring-consul-webclient
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        instance-id: ${spring.application.name}:${random.value}
+        service-name: ${spring.application.name}
+        health-check-critical-timeout: "1m"
+        health-check-path: /actuator/health
+        health-check-interval: 10s
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+remote:
+  services:
+    url: http://spring-consul
