@@ -12,7 +12,7 @@ with these features:
 
 ## Setup
 
-The WebClient is part of spring-webflux module and we will add it as required dependency for Spring Reactive support.
+The WebClient is part of spring-webflux module, and we will add it as required dependency for Spring Reactive support.
 
 ```xml
 <dependency>
