@@ -56,11 +56,12 @@ spring:
         health-check-critical-timeout: "1m"
         health-check-path: /actuator/health
         health-check-interval: 10s
+        register: false
 management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health
 
 remote:
   services:
@@ -73,26 +74,32 @@ An inter-service communication is realized by the WebClient from Spring WebFlux 
 
 ```java
 @Bean
-    public WebClient webClient(ClientConfig config) {
-        HttpClient httpClient = HttpClient.create()
-                .doOnConnected(connection ->  connection
-                .addHandlerLast(new ReadTimeoutHandler(10))
-                .addHandlerLast(new WriteTimeoutHandler(10)));
+public WebClient webClient(ClientConfig config) {
+    HttpClient httpClient = HttpClient.create()
+            .doOnConnected(connection ->  connection
+            .addHandlerLast(new ReadTimeoutHandler(10))
+            .addHandlerLast(new WriteTimeoutHandler(10)));
 
-        ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
+    ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
 
-        return webClientBuilder()
-                .baseUrl(config.getUrl())
-                .clientConnector(connector)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
-    }
+    return webClientBuilder()
+            .baseUrl(config.getUrl())
+            .clientConnector(connector)
+            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .build();
+}
 
-    @Bean
-    @LoadBalanced
-    public WebClient.Builder webClientBuilder() {
-        return WebClient.builder();
-    }
+@Bean
+@LoadBalanced
+public WebClient.Builder webClientBuilder() {
+    return WebClient.builder();
+}
+
+@Bean
+@ConfigurationProperties(prefix = "remote.services")
+public ClientConfig clientConfig() {
+    return new ClientConfig();
+}
 
 ```
 
@@ -102,9 +109,6 @@ You must as well enable the client-side service discovery
 @SpringBootApplication
 @EnableDiscoveryClient
 public class Application {
-
-	@Autowired
-	DiscoveryClient discoveryClient;
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);

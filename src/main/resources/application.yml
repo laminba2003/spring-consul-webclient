@@ -1,5 +1,6 @@
 server:
   port: 9092
+
 spring:
   application:
     name: spring-consul-webclient
@@ -13,11 +14,13 @@ spring:
         health-check-critical-timeout: "1m"
         health-check-path: /actuator/health
         health-check-interval: 10s
+        register: false
+
 management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health
 
 remote:
   services:

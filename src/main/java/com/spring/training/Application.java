@@ -26,8 +26,6 @@ public class Application implements CommandLineRunner {
 		final String serviceId = "spring-consul";
 		List<ServiceInstance> instances = discoveryClient.getInstances(serviceId);
 		System.out.println(serviceId);
-		instances.forEach(instance -> {
-			System.out.println(instance.getUri());
-		});
+		instances.forEach(instance -> System.out.println(instance.getUri()));
 	}
 }
