@@ -43,6 +43,7 @@ The WebClient is part of spring-webflux module, and we will add it as required d
 ```yaml
 server:
   port: 9092
+
 spring:
   application:
     name: spring-consul-webclient
@@ -56,7 +57,8 @@ spring:
         health-check-critical-timeout: "1m"
         health-check-path: /actuator/health
         health-check-interval: 10s
-        register: false
+        prefer-ip-address: true
+
 management:
   endpoints:
     web:
@@ -70,7 +72,7 @@ remote:
 
 ## Creating WebClient
 
-An inter-service communication is realized by the WebClient from Spring WebFlux project. The same as for RestTemplate you should annotate it with Spring Cloud Commons @LoadBalanced . It enables integration with service discovery and load balancing using Netflix OSS Ribbon client. So, the first step is to declare a client builder bean with @LoadBalanced annotation.
+An inter-service communication is realized by the WebClient from Spring WebFlux project. The same as for RestTemplate you should annotate it with Spring Cloud Commons @LoadBalanced . It enables integration with service discovery and load balancing using Netflix OSS Ribbon client. So, the first step is to declare a client builder bean with **@LoadBalanced** annotation.
 
 ```java
 @Bean

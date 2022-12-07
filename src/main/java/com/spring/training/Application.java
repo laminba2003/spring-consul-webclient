@@ -14,18 +14,22 @@ import java.util.List;
 @EnableDiscoveryClient
 public class Application implements CommandLineRunner {
 
-	@Autowired
-	DiscoveryClient discoveryClient;
+    @Autowired
+    DiscoveryClient discoveryClient;
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
 
-	@Override
-	public void run(String... args)  {
-		final String serviceId = "spring-consul";
-		List<ServiceInstance> instances = discoveryClient.getInstances(serviceId);
-		System.out.println(serviceId);
-		instances.forEach(instance -> System.out.println(instance.getUri()));
-	}
+    @Override
+    public void run(String... args) {
+        final String serviceId = "spring-consul";
+        List<ServiceInstance> instances = discoveryClient.getInstances(serviceId);
+        System.out.println(serviceId);
+        if (instances.size() > 0) {
+            instances.forEach(instance -> System.out.println(instance.getUri()));
+        } else {
+            System.out.println("no registered instance found");
+        }
+    }
 }

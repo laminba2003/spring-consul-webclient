@@ -41,7 +41,6 @@ public class ApplicationConfig {
         return WebClient.builder();
     }
 
-
     @Bean
     public PersonClient personClient(WebClient client) {
         return new PersonClient(client);
