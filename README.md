@@ -72,7 +72,7 @@ remote:
 
 ## Creating WebClient
 
-An inter-service communication is realized by the WebClient from Spring WebFlux project. The same as for RestTemplate you should annotate it with Spring Cloud Commons @LoadBalanced . It enables integration with service discovery and load balancing using Netflix OSS Ribbon client. So, the first step is to declare a client builder bean with **@LoadBalanced** annotation.
+An inter-service communication is realized by the WebClient from Spring WebFlux project. The same as for RestTemplate you should annotate it with @LoadBalanced. It enables integration with service discovery and load balancing using Spring Cloud Load Balancer. So, the first step is to declare a client builder bean with **@LoadBalanced** annotation.
 
 ```java
 @Bean
@@ -104,8 +104,20 @@ public ClientConfig clientConfig() {
 }
 
 ```
+Load balancing is the process of distributing traffic among different instances of the same application.
 
-You must as well enable the client-side service discovery
+To create a fault-tolerant system, it's common to run multiple instances of each application. Thus, whenever one service needs to communicate with another, it needs to pick a particular instance to send its request.
+
+There are many algorithms when it comes to load balancing:
+
+- Random selection: Choosing an instance randomly
+- Round-robin: Choosing an instance in the same order each time
+- Least connections: Choosing the instance with the fewest current connections
+- Weighted metric: Using a weighted metric to choose the best instance (for example, CPU or memory usage)
+- IP hash: Using the hash of the client IP to map to an instance
+
+
+You must also enable the client-side service discovery
 
 ```java
 @SpringBootApplication
