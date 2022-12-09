@@ -117,18 +117,33 @@ There are many algorithms when it comes to load balancing:
 - IP hash: Using the hash of the client IP to map to an instance
 
 
-You must also enable the client-side service discovery
+You must also enable the client-side service discovery and you can as well use the discovery client in your application to lookup for your services instances.
 
 ```java
 @SpringBootApplication
 @EnableDiscoveryClient
-public class Application {
+public class Application implements CommandLineRunner {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-	}
+    @Autowired
+    DiscoveryClient discoveryClient;
 
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+    @Override
+    public void run(String... args) {
+        final String serviceId = "spring-consul";
+        List<ServiceInstance> instances = discoveryClient.getInstances(serviceId);
+        System.out.println(serviceId);
+        if (instances.size() > 0) {
+            instances.forEach(instance -> System.out.println(instance.getUri()));
+        } else {
+            System.out.println("no registered instance found");
+        }
+    }
 }
+
 ```
 
 ## Sending Request
