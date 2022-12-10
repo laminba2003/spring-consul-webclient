@@ -1,7 +1,5 @@
 package com.spring.training.config;
 
-import com.spring.training.client.CountryClient;
-import com.spring.training.client.PersonClient;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.springframework.boot.autoconfigure.web.WebProperties;
@@ -42,16 +40,6 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public PersonClient personClient(WebClient client) {
-        return new PersonClient(client);
-    }
-
-    @Bean
-    public CountryClient countryClient(WebClient client) {
-        return new CountryClient(client);
-    }
-
-    @Bean
     public WebProperties.Resources resources() {
         return new WebProperties.Resources();
     }
@@ -61,4 +49,5 @@ public class ApplicationConfig {
     public ClientConfig clientConfig() {
         return new ClientConfig();
     }
+
 }
