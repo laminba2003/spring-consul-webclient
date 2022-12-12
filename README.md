@@ -117,11 +117,11 @@ There are many algorithms when it comes to load balancing:
 - IP hash: Using the hash of the client IP to map to an instance
 
 
-You must also enable the client-side service discovery and you can as well use the discovery client in your application to lookup for your services instances.
+You can as well use the discovery client in your application to lookup for your services instances.
 
 ```java
 @SpringBootApplication
-@EnableDiscoveryClient
+
 public class Application implements CommandLineRunner {
 
     @Autowired
