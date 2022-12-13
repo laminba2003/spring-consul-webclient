@@ -55,8 +55,8 @@ public class ApplicationConfig {
                         KeyStore keyStore = KeyStore.getInstance("JKS");
                         DefaultResourceLoader loader = new DefaultResourceLoader();
                         String password = config.getSsl().get("key-store-password");
-                        String keystoreFile = config.getSsl().get("key-store");
-                        keyStore.load(loader.getResource(keystoreFile).getInputStream(), password.toCharArray());
+                        String file = config.getSsl().get("key-store");
+                        keyStore.load(loader.getResource(file).getInputStream(), password.toCharArray());
                         KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
                         keyManagerFactory.init(keyStore, password.toCharArray());
                         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
