@@ -1,0 +1,12 @@
+server:
+  ssl:
+    enabled: true
+    key-store: classpath:server.jks
+    key-store-password: changeit
+    key-alias: thinktech
+
+remote:
+  services:
+    ssl:
+      key-store: classpath:server.jks
+      key-store-password: changeit
