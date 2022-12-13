@@ -146,6 +146,58 @@ public class Application implements CommandLineRunner {
 
 ```
 
+## Configuring TLS with WebClient
+
+There is some work to do to get WebClient to communicate with TLS.
+
+```yaml
+remote:
+  services:
+    ssl:
+      key-store: classpath:server.jks
+      key-store-password: changeit
+      key-store-type: JKS
+```
+
+```java
+@Bean
+    @Profile("ssl")
+    public WebClient webSSLClient(ClientConfig config) {
+        HttpClient httpClient = HttpClient.create()
+                .doOnConnected(connection -> connection
+                        .addHandlerLast(new ReadTimeoutHandler(10))
+                        .addHandlerLast(new WriteTimeoutHandler(10)))
+                .secure(spec -> {
+                    try {
+                        String type = config.getSsl().get("key-store-type");
+                        KeyStore keyStore = KeyStore.getInstance(type);
+                        DefaultResourceLoader loader = new DefaultResourceLoader();
+                        String file = config.getSsl().get("key-store");
+                        String password = config.getSsl().get("key-store-password");
+                        keyStore.load(loader.getResource(file).getInputStream(), password.toCharArray());
+                        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+                        keyManagerFactory.init(keyStore, password.toCharArray());
+                        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                        trustManagerFactory.init(keyStore);
+                        spec.sslContext(SslContextBuilder.forClient()
+                                .keyManager(keyManagerFactory)
+                                .trustManager(trustManagerFactory)
+                                .build());
+                    } catch (Exception e) {
+                        log.error("Unable to set SSL Context", e);
+                    }
+                });
+
+        ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
+
+        return webClientBuilder()
+                .baseUrl(config.getUrl())
+                .clientConnector(connector)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+    }
+```
+
 ## Sending Request
 
 We can use retrieve() and then bodyToFlux() and bodyToMono() method in case we are only interested in the API response. 
