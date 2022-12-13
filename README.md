@@ -153,6 +153,7 @@ There is some work to do to get WebClient to communicate with TLS.
 ```yaml
 remote:
   services:
+    url: https://spring-consul
     ssl:
       key-store: classpath:server.jks
       key-store-password: changeit

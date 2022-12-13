@@ -8,6 +8,7 @@ server:
 
 remote:
   services:
+    url: https://spring-consul
     ssl:
       key-store: classpath:server.jks
       key-store-password: changeit
