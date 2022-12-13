@@ -52,10 +52,11 @@ public class ApplicationConfig {
                         .addHandlerLast(new WriteTimeoutHandler(10)))
                 .secure(spec -> {
                     try {
-                        KeyStore keyStore = KeyStore.getInstance("JKS");
+                        String type = config.getSsl().get("key-store-type");
+                        KeyStore keyStore = KeyStore.getInstance(type);
                         DefaultResourceLoader loader = new DefaultResourceLoader();
-                        String password = config.getSsl().get("key-store-password");
                         String file = config.getSsl().get("key-store");
+                        String password = config.getSsl().get("key-store-password");
                         keyStore.load(loader.getResource(file).getInputStream(), password.toCharArray());
                         KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
                         keyManagerFactory.init(keyStore, password.toCharArray());
