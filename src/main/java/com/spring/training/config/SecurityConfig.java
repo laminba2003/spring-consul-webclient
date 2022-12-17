@@ -16,7 +16,8 @@ public class SecurityConfig {
         http.authorizeExchange(exchanges -> exchanges
                 .pathMatchers("/actuator/**").permitAll()
                 .pathMatchers("/**").authenticated()
-        ).oauth2ResourceServer(oauth2 -> oauth2.jwt().jwtAuthenticationConverter(new JwtConverter()));
+        ).oauth2ResourceServer(oauth2 -> oauth2.jwt().jwtAuthenticationConverter(new JwtConverter()))
+        .cors();
         return http.build();
     }
 
