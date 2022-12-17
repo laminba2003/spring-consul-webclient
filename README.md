@@ -121,7 +121,6 @@ You can as well use the discovery client in your application to lookup for your 
 
 ```java
 @SpringBootApplication
-
 public class Application implements CommandLineRunner {
 
     @Autowired
@@ -162,42 +161,58 @@ remote:
 
 ```java
 @Bean
-    @Profile("ssl")
-    public WebClient webSSLClient(ClientConfig config) {
-        HttpClient httpClient = HttpClient.create()
-                .doOnConnected(connection -> connection
-                        .addHandlerLast(new ReadTimeoutHandler(10))
-                        .addHandlerLast(new WriteTimeoutHandler(10)))
-                .secure(spec -> {
-                    try {
-                        String type = config.getSsl().get("key-store-type");
-                        KeyStore keyStore = KeyStore.getInstance(type);
-                        DefaultResourceLoader loader = new DefaultResourceLoader();
-                        String file = config.getSsl().get("key-store");
-                        String password = config.getSsl().get("key-store-password");
-                        keyStore.load(loader.getResource(file).getInputStream(), password.toCharArray());
-                        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-                        keyManagerFactory.init(keyStore, password.toCharArray());
-                        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-                        trustManagerFactory.init(keyStore);
-                        spec.sslContext(SslContextBuilder.forClient()
-                                .keyManager(keyManagerFactory)
-                                .trustManager(trustManagerFactory)
-                                .build());
-                    } catch (Exception e) {
-                        log.error("Unable to set SSL Context", e);
-                    }
-                });
+@Profile("ssl")
+public WebClient webSSLClient(ClientConfig config) {
+    HttpClient httpClient = HttpClient.create()
+            .doOnConnected(connection -> connection
+                    .addHandlerLast(new ReadTimeoutHandler(10))
+                    .addHandlerLast(new WriteTimeoutHandler(10)))
+            .secure(spec -> {
+                try {
+                    String type = config.getSsl().get("key-store-type");
+                    KeyStore keyStore = KeyStore.getInstance(type);
+                    DefaultResourceLoader loader = new DefaultResourceLoader();
+                    String file = config.getSsl().get("key-store");
+                    String password = config.getSsl().get("key-store-password");
+                    keyStore.load(loader.getResource(file).getInputStream(), password.toCharArray());
+                    KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+                    keyManagerFactory.init(keyStore, password.toCharArray());
+                    TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                    trustManagerFactory.init(keyStore);
+                    spec.sslContext(SslContextBuilder.forClient()
+                            .keyManager(keyManagerFactory)
+                            .trustManager(trustManagerFactory)
+                            .build());
+                } catch (Exception e) {
+                    log.error("Unable to set SSL Context", e);
+                }
+            });
 
-        ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
+    ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
 
-        return webClientBuilder()
-                .baseUrl(config.getUrl())
-                .clientConnector(connector)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
-    }
+    return webClientBuilder()
+            .baseUrl(config.getUrl())
+            .clientConnector(connector)
+            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .build();
+}
 ```
+
+## Bearer Token Propagation
+
+It might be handy to pass a bearer token to downstream services. This is quite simple with **ServerBearerExchangeFilterFunction**, which you can see in the following example:
+
+```java
+@Bean
+public WebClient webClient() {
+    return WebClient.builder()
+            .filter(new ServerBearerExchangeFilterFunction())
+            .build();
+}
+```
+
+When the WebClient is used to perform requests, Spring Security will look up the current Authentication and extract any AbstractOAuth2Token credential. Then, it will propagate that token in the Authorization header.
+
 
 ## Sending Request
 
