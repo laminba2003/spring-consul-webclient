@@ -1,7 +1,7 @@
 package com.spring.training.client;
 
 import com.spring.training.exception.EntityNotFoundException;
-import com.spring.training.model.Person;
+import com.spring.training.domain.Person;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;

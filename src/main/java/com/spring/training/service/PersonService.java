@@ -1,7 +1,7 @@
 package com.spring.training.service;
 
 import com.spring.training.client.PersonClient;
-import com.spring.training.model.Person;
+import com.spring.training.domain.Person;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;

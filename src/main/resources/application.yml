@@ -15,6 +15,7 @@ spring:
         health-check-path: /actuator/health
         health-check-interval: 10s
 
+
 management:
   endpoints:
     web:
@@ -29,3 +30,4 @@ logging:
   level:
     org.springframework.web: TRACE
     org.springframework.http.server.reactive: TRACE
+    reactor.netty.http.client: TRACE

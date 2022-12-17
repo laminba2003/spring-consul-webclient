@@ -15,6 +15,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ClientHttpConnector;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.http.codec.FormHttpMessageReader;
+import org.springframework.http.codec.ServerCodecConfigurer;
+import org.springframework.security.oauth2.server.resource.web.reactive.function.client.ServerBearerExchangeFilterFunction;
+import org.springframework.web.reactive.config.WebFluxConfigurationSupport;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
@@ -24,7 +29,7 @@ import java.security.KeyStore;
 
 @Configuration
 @Slf4j
-public class ApplicationConfig {
+public class ApplicationConfig extends WebFluxConfigurationSupport {
 
     @Bean
     @Profile("!ssl")
@@ -33,14 +38,7 @@ public class ApplicationConfig {
                 .doOnConnected(connection -> connection
                         .addHandlerLast(new ReadTimeoutHandler(10))
                         .addHandlerLast(new WriteTimeoutHandler(10)));
-
-        ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
-
-        return webClientBuilder()
-                .baseUrl(config.getUrl())
-                .clientConnector(connector)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
+        return buildWebClient(config, httpClient);
     }
 
     @Bean
@@ -70,13 +68,18 @@ public class ApplicationConfig {
                         log.error("Unable to set SSL Context", e);
                     }
                 });
+        return buildWebClient(config, httpClient);
+    }
 
+    private WebClient buildWebClient(ClientConfig config, HttpClient httpClient) {
         ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
-
         return webClientBuilder()
                 .baseUrl(config.getUrl())
                 .clientConnector(connector)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .filter(new ServerBearerExchangeFilterFunction())
+                .exchangeStrategies(ExchangeStrategies.builder().codecs(c ->
+                        c.defaultCodecs().enableLoggingRequestDetails(true)).build()
+                ).defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
 
@@ -95,6 +98,13 @@ public class ApplicationConfig {
     @ConfigurationProperties(prefix = "remote.services")
     public ClientConfig clientConfig() {
         return new ClientConfig();
+    }
+
+    @Override
+    public void configureHttpMessageCodecs(ServerCodecConfigurer config) {
+        FormHttpMessageReader reader = new FormHttpMessageReader();
+        reader.setEnableLoggingRequestDetails(true);
+        config.customCodecs().register(reader);
     }
 
 }

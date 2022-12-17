@@ -1,6 +1,6 @@
 package com.spring.training.controller;
 
-import com.spring.training.model.Country;
+import com.spring.training.domain.Country;
 import com.spring.training.service.CountryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

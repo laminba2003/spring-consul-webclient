@@ -1,7 +1,7 @@
 package com.spring.training.service;
 
 import com.spring.training.client.CountryClient;
-import com.spring.training.model.Country;
+import com.spring.training.domain.Country;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
