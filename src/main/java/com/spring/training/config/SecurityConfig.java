@@ -15,9 +15,9 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
         http.authorizeExchange(exchanges -> exchanges
                 .pathMatchers("/actuator/**").permitAll()
-                .pathMatchers("/**").authenticated()
-        ).oauth2ResourceServer(oauth2 -> oauth2.jwt().jwtAuthenticationConverter(new JwtConverter()))
-        .cors();
+                .pathMatchers("/**").authenticated())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt().jwtAuthenticationConverter(new JwtConverter()))
+                .cors().and().csrf().disable();
         return http.build();
     }
 
@@ -32,7 +32,6 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return new CorsWebFilter(source);
     }
-
 
 
 }
