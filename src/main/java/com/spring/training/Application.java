@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+
 import java.util.List;
 
 @SpringBootApplication
@@ -23,10 +24,10 @@ public class Application implements CommandLineRunner {
         final String serviceId = "spring-consul";
         List<ServiceInstance> instances = discoveryClient.getInstances(serviceId);
         System.out.println(serviceId);
-        if (instances.size() > 0) {
-            instances.forEach(instance -> System.out.println(instance.getUri()));
-        } else {
+        if (instances.isEmpty()) {
             System.out.println("no registered instance found");
+        } else {
+            instances.forEach(instance -> System.out.println(instance.getUri()));
         }
     }
 }
