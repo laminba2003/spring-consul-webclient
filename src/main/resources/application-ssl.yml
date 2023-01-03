@@ -13,3 +13,11 @@ remote:
       key-store: classpath:server.jks
       key-store-password: changeit
       key-store-type: JKS
+
+
+spring:
+  cloud:
+    consul:
+      discovery:
+        health-check-tls-skip-verify: true
+        scheme: https

@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: spring-consul-webclient
+  zipkin:
+    enabled: false
   cloud:
     consul:
       host: localhost
@@ -14,7 +16,7 @@ spring:
         health-check-critical-timeout: "1m"
         health-check-path: /actuator/health
         health-check-interval: 10s
-
+        hostname: DESKTOP-GJ9JFOE.mshome.net
 
 management:
   endpoints:
