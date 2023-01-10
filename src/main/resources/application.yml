@@ -52,4 +52,3 @@ logging:
     org.springframework.web: TRACE
     org.springframework.http.server.reactive: TRACE
     reactor.netty.http.client: TRACE
-    org.springframework.web.cors.reactive.DefaultCorsProcessor: DEBUG
