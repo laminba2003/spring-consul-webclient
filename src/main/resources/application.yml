@@ -33,8 +33,23 @@ remote:
   services:
     url: http://spring-consul
 
+info:
+  application:
+    name: Spring Consul WebClient
+    description: Simple SpringBoot WebClient application with Service Discovery
+
+springdoc:
+  swagger-ui:
+    oauth:
+      client-id: spring
+      client-secret: tkkH2u6lTvxh3JFsaveNQuXPWXFkd4yw
+      authorizationUrl: http://localhost:8080/realms/training/protocol/openid-connect/auth
+      tokenUrl: http://localhost:8080/realms/training/protocol/openid-connect/token
+
+
 logging:
   level:
     org.springframework.web: TRACE
     org.springframework.http.server.reactive: TRACE
     reactor.netty.http.client: TRACE
+    org.springframework.web.cors.reactive.DefaultCorsProcessor: DEBUG
