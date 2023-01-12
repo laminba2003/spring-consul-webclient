@@ -56,6 +56,7 @@ public class OpenAPIConfig {
         OauthFlowConfig oauthFlowConfig = oauthFlowConfig();
         oAuthFlow.authorizationUrl(oauthFlowConfig.getAuthorizationUrl());
         oAuthFlow.setTokenUrl(oauthFlowConfig.getTokenUrl());
+        oAuthFlow.setRefreshUrl(oauthFlowConfig.getTokenUrl());
         return oAuthFlow;
     }
 
