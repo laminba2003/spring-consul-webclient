@@ -47,6 +47,21 @@ springdoc:
       tokenUrl: http://localhost:8080/realms/training/protocol/openid-connect/token
 
 
+cors:
+  allowCredentials: true
+  allowedOriginPattern: "*"
+  allowedHeaders:
+    - "*"
+  allowedMethods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+    - PUT
+    - OPTIONS
+    - PATCH
+    - DELETE
+
 logging:
   level:
     org.springframework.web: TRACE
