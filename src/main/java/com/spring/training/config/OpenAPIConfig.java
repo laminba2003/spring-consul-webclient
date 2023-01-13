@@ -33,14 +33,7 @@ public class OpenAPIConfig {
         return new OpenAPI().info(new Info().title(environment.getProperty("info.application.name"))
                 .description(environment.getProperty("info.application.description"))
                 .version(version))
-                .components(new Components().addSecuritySchemes("OAuth",
-                        new SecurityScheme()
-                                .type(SecurityScheme.Type.OAUTH2)
-                                .scheme("bearer")
-                                .bearerFormat("jwt")
-                                .in(SecurityScheme.In.HEADER)
-                                .name("Authorization")
-                                .flows(new OAuthFlows().authorizationCode(createOAuthFlow()))))
+                .components(createSecurityComponents())
                 .addSecurityItem(new SecurityRequirement().addList("OAuth"))
                 .tags(createTags());
     }
@@ -51,13 +44,24 @@ public class OpenAPIConfig {
         return new OauthFlowConfig();
     }
 
-    private OAuthFlow createOAuthFlow() {
+    private Components createSecurityComponents() {
+        return new Components().addSecuritySchemes("OAuth",
+                new SecurityScheme()
+                        .type(SecurityScheme.Type.OAUTH2)
+                        .scheme("bearer")
+                        .bearerFormat("jwt")
+                        .in(SecurityScheme.In.HEADER)
+                        .name("Authorization")
+                        .flows(createOAuthFlows()));
+    }
+
+    private OAuthFlows createOAuthFlows() {
         OAuthFlow oAuthFlow = new OAuthFlow();
         OauthFlowConfig oauthFlowConfig = oauthFlowConfig();
         oAuthFlow.authorizationUrl(oauthFlowConfig.getAuthorizationUrl());
         oAuthFlow.setTokenUrl(oauthFlowConfig.getTokenUrl());
         oAuthFlow.setRefreshUrl(oauthFlowConfig.getTokenUrl());
-        return oAuthFlow;
+        return new OAuthFlows().authorizationCode(oAuthFlow);
     }
 
     private List<Tag> createTags() {
