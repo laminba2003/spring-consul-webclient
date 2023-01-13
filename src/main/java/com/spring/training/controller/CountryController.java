@@ -1,5 +1,6 @@
 package com.spring.training.controller;
 
+import com.spring.training.annotation.IsAdmin;
 import com.spring.training.domain.Country;
 import com.spring.training.service.CountryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,6 +41,7 @@ public class CountryController {
     @Operation(summary = "createCountry", description = "create a country")
     @ApiResponses({@ApiResponse(responseCode = "201", description = "country created successfully"),
             @ApiResponse(responseCode = "409", description = "country already created")})
+    @IsAdmin
     public Mono<Country> createCountry(@RequestBody Country country) {
         return service.createCountry(country);
     }
@@ -48,6 +50,7 @@ public class CountryController {
     @Operation(summary = "updateCountry", description = "update a country by its name")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "country updated successfully"),
             @ApiResponse(responseCode = "404", description = "country not found")})
+    @IsAdmin
     public Mono<Country> updateCountry(@Parameter(description = "country name", required = true) @PathVariable("name") String name,
                                        @RequestBody Country user) {
         return service.updateCountry(name, user);
@@ -57,6 +60,7 @@ public class CountryController {
     @Operation(summary = "deleteCountry", description = "delete a country by its name")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "country deleted successfully"),
             @ApiResponse(responseCode = "409", description = "cannot delete country")})
+    @IsAdmin
     public Mono<Void> deleteCountry(@Parameter(description = "country name", required = true) @PathVariable("name") String name) {
         return service.deleteCountry(name);
     }
