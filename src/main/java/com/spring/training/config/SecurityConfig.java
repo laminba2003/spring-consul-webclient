@@ -1,5 +1,7 @@
 package com.spring.training.config;
 
+import com.spring.training.util.Cors;
+import com.spring.training.util.JwtConverter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
